@@ -47,14 +47,22 @@ export async function setLogin(data) {
 }
 
 export async function getStories() {
-  console.log(ENDPOINTS.STORIES);
   try {
-    const response = await fetch(ENDPOINTS.STORIES);
+    const userData = JSON.parse(localStorage.getItem("loginResult"));
+    const token = userData.token;
+    const options = {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    };
+
+    const response = await fetch(ENDPOINTS.STORIES, options);
     const responseJson = await response.json();
 
     if (responseJson.error) {
       showResponseMessage(responseJson.message);
-      return;
+      return [];
     }
 
     return responseJson.listStory;
@@ -65,14 +73,24 @@ export async function getStories() {
 
 export async function getDetailStory(id) {
   try {
-    const response = await fetch(`${ENDPOINTS.STORIES}/${id}`);
+    const userData = JSON.parse(localStorage.getItem("loginResult"));
+    const token = userData.token;
+    const options = {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    };
+
+    const response = await fetch(`${ENDPOINTS.STORIES}/${id}`, options);
     const responseJson = await response.json();
 
     if (responseJson.error) {
       showResponseMessage(responseJson.message);
-    } else {
-      return responseJson.story;
+      return [];
     }
+
+    return responseJson.story;
   } catch (error) {
     showResponseMessage(error);
   }

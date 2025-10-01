@@ -33,7 +33,7 @@ export default class HomePage {
   async afterRender() {
     this.#presenter = new HomePresenter({ view: this, model: ShareStoryAPI });
 
-    await this.#presenter.initialGalleryAndMap();
+    // await this.#presenter.initialGalleryAndMap();
   }
 
   async initialMap() {
