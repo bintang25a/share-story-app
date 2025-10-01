@@ -47,15 +47,17 @@ export async function setLogin(data) {
 }
 
 export async function getStories() {
+  console.log(ENDPOINTS.STORIES);
   try {
     const response = await fetch(ENDPOINTS.STORIES);
     const responseJson = await response.json();
 
     if (responseJson.error) {
       showResponseMessage(responseJson.message);
-    } else {
-      return responseJson.listStory;
+      return;
     }
+
+    return responseJson.listStory;
   } catch (error) {
     showResponseMessage(error);
   }
