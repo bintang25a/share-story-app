@@ -1,23 +1,32 @@
-export const navbarList = () => {
-  const navigationDrawer = document.getElementById("navigation-drawer");
-  const user = JSON.parse(localStorage.getItem("loginResult") || "null");
+import { showFormattedDate } from "./utils";
+
+export const generateNavbarListTemplate = (route) => {
+  const user = JSON.parse(localStorage.getItem("loginResult"));
   const token = user?.token;
 
   if (token) {
-    navigationDrawer.innerHTML = `
+    return `
       <ul id="nav-list" class="nav-list">
         <li><a href="#/addstory">Tambah Cerita</a></li>
         <li><a href="#/mystory">Cerita Saya</a></li>
-        <li><a href="#/logout">Logout</a></li>
+        <li><a href="#/logout" id="logout-button">Logout</a></li>
       </ul>
     `;
   } else {
-    navigationDrawer.innerHTML = `
-    <ul id="nav-list" class="nav-list">
-      <li><a href="#/mystory">Register</a></li>
-      <li><a href="#/logout">Login</a></li>
-    </ul>
-  `;
+    console.log(route);
+    if (route !== "/login") {
+      return `
+        <ul id="nav-list" class="nav-list">
+          <li><a href="#/login">Login</a></li>
+        </ul>
+      `;
+    } else {
+      return `
+      <ul id="nav-list" class="nav-list">
+        <li><a href="#/register">Register</a></li>
+      </ul>
+    `;
+    }
   }
 };
 
@@ -30,6 +39,25 @@ export function generateLoaderTemplate() {
 export function generateLoaderAbsoluteTemplate() {
   return `
     <div class="loader loader-absolute"></div>
+  `;
+}
+
+export function generateStoryCardTemplate({
+  id,
+  name,
+  description,
+  photoUrl,
+  createdAt,
+  location,
+}) {
+  return `
+    <div class="card-story" id=${id}>
+      <img src=${photoUrl} alt=${name}>
+      <h2>${name} Story</h2>
+      <span>Dibuat pada tanggal ${showFormattedDate(
+        createdAt
+      )}, di ${location}</span>
+    </div>
   `;
 }
 

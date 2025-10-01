@@ -1,7 +1,4 @@
-import LoginPage from "../pages/auth/login/login-page.js";
 import { getActiveRoute } from "../routes/url-parser.js";
-
-const unauthenticatedRoutesOnly = ["/login", "/register"];
 
 export function getAccessToken() {
   try {
@@ -23,21 +20,22 @@ export function getAccessToken() {
   }
 }
 
+const unauthenticatedRoutesOnly = ["/login", "/register"];
+
 export function checkUnauthenticatedRouteOnly(page) {
   const url = getActiveRoute();
   const isLogin = !!getAccessToken();
 
   if (unauthenticatedRoutesOnly.includes(url) && isLogin) {
     location.hash = "/";
-    return null;
+    return page;
   }
 
   return page;
 }
 
 export function checkAuthenticatedRoute(page) {
-  const isLogin = false;
-  console.log(isLogin);
+  const isLogin = !!getAccessToken();
 
   if (!isLogin) {
     location.hash = "/login";

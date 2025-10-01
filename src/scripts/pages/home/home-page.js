@@ -1,7 +1,3 @@
-import {
-  generateLoaderAbsoluteTemplate,
-  generateReportItemTemplate,
-} from "../../template.js";
 import * as ShareStoryAPI from "../../data/api.js";
 import HomePresenter from "./home-presenter";
 import Map from "../../utils/map";
@@ -35,6 +31,8 @@ export default class HomePage {
 
     // await this.#presenter.initialGalleryAndMap();
   }
+
+  async showStoryCard() {}
 
   async initialMap() {
     this.#map = await Map.build("#map", { zoom: 10, locate: true });

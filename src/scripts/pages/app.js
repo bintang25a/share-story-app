@@ -1,5 +1,6 @@
 import routes from "../routes/routes";
 import { getActiveRoute } from "../routes/url-parser";
+import { generateNavbarListTemplate } from "../template";
 
 class App {
   #content = null;
@@ -40,8 +41,16 @@ class App {
     const pageFactory = routes[url];
     const page = pageFactory();
 
+    const route = getActiveRoute();
+    const navigationDrawer = document.getElementById("navigation-drawer");
+    navigationDrawer.innerHTML = generateNavbarListTemplate(route);
+
     this.#content.innerHTML = await page.render();
     await page.afterRender();
+
+    document.getElementById("logout-button").addEventListener("click", (e) => {
+      localStorage.removeItem("loginResult");
+    });
   }
 }
 

@@ -19,9 +19,13 @@ export async function setRegister(data) {
 
     const response = await fetch(ENDPOINTS.REGISTER, options);
     const responseJson = await response.json();
+
     showResponseMessage(responseJson.message);
+
+    return { success: true, message: "Register successfully" };
   } catch (error) {
     showResponseMessage(error);
+    return { success: true, message: "Register failed" };
   }
 }
 
@@ -38,11 +42,22 @@ export async function setLogin(data) {
     const response = await fetch(ENDPOINTS.LOGIN, options);
     const responseJson = await response.json();
 
-    localStorage.setItem("loginResult", JSON.stringify(response.loginResult));
+    if (responseJson.error) {
+      showResponseMessage(responseJson.message);
+      return { success: false, message: "Login failed" };
+    }
+
+    localStorage.setItem(
+      "loginResult",
+      JSON.stringify(responseJson.loginResult)
+    );
 
     showResponseMessage(responseJson.message);
+
+    return { success: true, message: "Login successfully" };
   } catch (error) {
     showResponseMessage(error);
+    return { success: false, message: "Login failed" };
   }
 }
 
@@ -114,6 +129,24 @@ export async function setStory(data) {
     showResponseMessage(responseJson.message);
   } catch (error) {
     showResponseMessage(error);
+  }
+}
+
+export async function getPlaceName(lat, lon) {
+  const url = `https://api.maptiler.com/geocoding/${lon},${lat}.json?key=${CONFIG.MAP_SERVICE_API_KEY}`;
+
+  try {
+    const res = await fetch(url);
+    const data = await res.json();
+
+    if (data?.features?.length > 0) {
+      return data.features[0].place_name;
+    } else {
+      return "Alamat tidak ditemukan";
+    }
+  } catch (err) {
+    console.error("Error saat mengambil lokasi:", err);
+    return null;
   }
 }
 

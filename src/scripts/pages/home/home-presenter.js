@@ -15,6 +15,10 @@ export default class HomePresenter {
     // }
   }
 
+  async showStoryCard() {
+    const stories = await this.#model.getStories();
+  }
+
   async initialGalleryAndMap() {
     try {
       await this.showReportsListMap();

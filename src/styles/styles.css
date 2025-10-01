@@ -113,7 +113,7 @@ body {
 }
 
 .nav-list li a {
-  font-size: var(--size-5);
+  font-size: var(--size-4);
   font-weight: 500;
   color: #141e16;
 
