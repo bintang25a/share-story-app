@@ -13,7 +13,6 @@ export const generateNavbarListTemplate = (route) => {
       </ul>
     `;
   } else {
-    console.log(route);
     if (route !== "/login") {
       return `
         <ul id="nav-list" class="nav-list">

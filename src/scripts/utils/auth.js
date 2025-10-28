@@ -3,7 +3,6 @@ import { getActiveRoute } from "../routes/url-parser.js";
 export function getAccessToken() {
   try {
     const rawData = localStorage.getItem("loginResult");
-    console.log(rawData);
     if (!rawData) return null;
 
     const userData = JSON.parse(rawData);

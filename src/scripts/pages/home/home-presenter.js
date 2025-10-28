@@ -8,31 +8,25 @@ export default class HomePresenter {
   }
 
   async showReportsListMap() {
-    // try {
-    //   await this.#view.initialMap();
-    // } catch (error) {
-    //   console.error("showReportsListMap: error:", error);
-    // }
-  }
-
-  async showStoryCard() {
-    const stories = await this.#model.getStories();
+    try {
+      await this.#view.initialMap();
+    } catch (error) {
+      console.error("showReportsListMap: error:", error);
+    }
   }
 
   async initialGalleryAndMap() {
     try {
       await this.showReportsListMap();
 
-      const response = await this.#model.getStories();
-      console.log(response);
+      const stories = await this.#model.getStories();
 
-      if (!response.ok) {
-        console.error("initialGalleryAndMap: response:", response);
-        // this.#view.populateReportsListError(response.message);
+      if (!stories || stories.length === 0) {
+        this.#view.populateReportsListError("Tidak ada cerita ditemukan.");
         return;
       }
 
-      this.#view.populateReportsList(response.message, response.data);
+      this.#view.populateReportsList("Stories fetched successfully", stories);
     } catch (error) {
       console.error("initialGalleryAndMap: error:", error);
       this.#view.populateReportsListError(error.message);

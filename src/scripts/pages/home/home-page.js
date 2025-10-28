@@ -1,6 +1,6 @@
 import * as ShareStoryAPI from "../../data/api.js";
-import HomePresenter from "./home-presenter";
-import Map from "../../utils/map";
+import HomePresenter from "./home-presenter.js";
+import Map from "../../utils/map.js";
 
 export default class HomePage {
   #presenter = null;
@@ -27,14 +27,63 @@ export default class HomePage {
   }
 
   async afterRender() {
-    this.#presenter = new HomePresenter({ view: this, model: ShareStoryAPI });
-
-    // await this.#presenter.initialGalleryAndMap();
+    this.#presenter = new HomePresenter({
+      view: this,
+      model: ShareStoryAPI,
+    });
+    await this.#presenter.initialGalleryAndMap();
   }
 
-  async showStoryCard() {}
-
   async initialMap() {
-    this.#map = await Map.build("#map", { zoom: 10, locate: true });
+    this.#map = await Map.build("#map", { zoom: 5, locate: true });
+  }
+
+  async populateReportsList(message, stories) {
+    const container = document.querySelector("#reports-list");
+    container.innerHTML = "";
+
+    stories.forEach((story) => {
+      const card = document.createElement("div");
+      card.className = "report-card";
+      card.innerHTML = `
+        <img src="${story.photoUrl}" alt="${story.name}" />
+        <h3>${story.name}</h3>
+        <p>${story.description}</p>
+        <small>${story.createdAt}</small>
+      `;
+      container.appendChild(card);
+    });
+
+    await this.addMarkersToMap(stories);
+  }
+
+  async populateReportsListError(errorMessage) {
+    const container = document.querySelector("#reports-list");
+
+    if (container) {
+      container.innerHTML = `<p class="error">${errorMessage}</p>`;
+    }
+  }
+
+  async addMarkersToMap(stories) {
+    if (!this.#map) {
+      await this.initialMap();
+    }
+
+    stories.forEach((story) => {
+      if (story.lat && story.lon) {
+        const popupContent = `
+          <strong>${story.name}</strong><br/>
+          ${story.description}<br/>
+          <img src="${story.photoUrl}" alt="${story.name}" width="100" />
+        `;
+
+        this.#map.addMarker(
+          [story.lat, story.lon],
+          {},
+          { content: popupContent }
+        );
+      }
+    });
   }
 }

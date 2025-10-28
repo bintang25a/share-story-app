@@ -48,8 +48,10 @@ class App {
     this.#content.innerHTML = await page.render();
     await page.afterRender();
 
-    document.getElementById("logout-button").addEventListener("click", (e) => {
-      localStorage.removeItem("loginResult");
+    document.getElementById("logout-button")?.addEventListener("click", (e) => {
+      setTimeout(() => {
+        localStorage.removeItem("loginResult");
+      }, 500);
     });
   }
 }

@@ -136,6 +136,10 @@ export default class Map {
     return newMarker;
   }
 
+  get map() {
+    return this.#map;
+  }
+
   addMapEventListener(eventName, callback) {
     this.#map.addEventListener(eventName, callback);
   }

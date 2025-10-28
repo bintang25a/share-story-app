@@ -64,9 +64,14 @@ export async function setLogin(data) {
 export async function getStories() {
   try {
     const userData = JSON.parse(localStorage.getItem("loginResult"));
-    const token = userData.token;
+    const token = userData?.token;
+
+    if (!userData) {
+      return [];
+    }
+
     const options = {
-      method: "POST",
+      method: "GET",
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -89,9 +94,14 @@ export async function getStories() {
 export async function getDetailStory(id) {
   try {
     const userData = JSON.parse(localStorage.getItem("loginResult"));
-    const token = userData.token;
+    const token = userData?.token;
+
+    if (!userData) {
+      return [];
+    }
+
     const options = {
-      method: "POST",
+      method: "GET",
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -111,24 +121,38 @@ export async function getDetailStory(id) {
   }
 }
 
-export async function setStory(data) {
+export async function setStory({ description, photo, lat, lon }) {
   try {
     const userData = JSON.parse(localStorage.getItem("loginResult"));
-    const token = userData.token;
+    const token = userData?.token;
+
+    if (!userData) {
+      return [];
+    }
+
+    const formData = new FormData();
+    formData.append("description", description);
+    formData.append("photo", photo);
+    if (lat && lon) {
+      formData.append("lat", lat);
+      formData.append("lon", lon);
+    }
+
     const options = {
       method: "POST",
       headers: {
-        "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify(data),
+      body: formData,
     };
 
     const response = await fetch(ENDPOINTS.STORIES, options);
     const responseJson = await response.json();
+
     showResponseMessage(responseJson.message);
+    return responseJson;
   } catch (error) {
-    showResponseMessage(error);
+    showResponseMessage(error.message || error);
   }
 }
 
