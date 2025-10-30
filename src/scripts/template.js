@@ -3,13 +3,23 @@ export const generateNavbarListTemplate = (route) => {
   const token = user?.token;
 
   if (token) {
-    return `
+    if (route == "/addstory") {
+      return `
+      <ul id="nav-list" class="nav-list">
+        <li><a href="#">Home</a></li>
+        <li><a href="#">Cerita Saya</a></li>
+        <li><a href="#/logout" id="logout-button">Logout</a></li>
+      </ul>
+    `;
+    } else {
+      return `
       <ul id="nav-list" class="nav-list">
         <li><a href="#/addstory">Tambah Cerita</a></li>
         <li><a href="#">Cerita Saya</a></li>
         <li><a href="#/logout" id="logout-button">Logout</a></li>
       </ul>
     `;
+    }
   } else {
     if (route !== "/login") {
       return `

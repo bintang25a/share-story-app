@@ -43,13 +43,27 @@ class App {
 
     const route = getActiveRoute();
     const navigationDrawer = document.getElementById("navigation-drawer");
-
     navigationDrawer.innerHTML = generateNavbarListTemplate(route);
 
+    this.#content.classList.add("page-exit");
+    await new Promise((resolve) => setTimeout(resolve, 200));
+
+    this.#content.classList.remove("page-exit");
     this.#content.innerHTML = await page.render();
     await page.afterRender();
 
-    document.getElementById("logout-button")?.addEventListener("click", (e) => {
+    this.#content.classList.add("page-enter");
+
+    requestAnimationFrame(() => {
+      this.#content.classList.add("page-enter-active");
+      this.#content.classList.remove("page-enter");
+    });
+
+    setTimeout(() => {
+      this.#content.classList.remove("page-enter-active");
+    }, 200);
+
+    document.getElementById("logout-button")?.addEventListener("click", () => {
       setTimeout(() => {
         localStorage.removeItem("loginResult");
         navigationDrawer.innerHTML = generateNavbarListTemplate(route);
