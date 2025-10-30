@@ -1,3 +1,5 @@
+import { loaderCircleTemplate } from "../../template";
+
 export default class HomePresenter {
   #view;
   #model;
@@ -16,7 +18,17 @@ export default class HomePresenter {
   }
 
   async initialGalleryAndMap() {
+    const loadingContainer = document.getElementById(
+      "reports-list-loading-container"
+    );
+    const mapLoadingContainer = document.getElementById(
+      "map-loading-container"
+    );
+
     try {
+      loadingContainer.innerHTML = loaderCircleTemplate();
+      mapLoadingContainer.innerHTML = loaderCircleTemplate();
+
       await this.showReportsListMap();
 
       const stories = await this.#model.getStories();
@@ -26,10 +38,13 @@ export default class HomePresenter {
         return;
       }
 
-      this.#view.populateReportsList("Stories fetched successfully", stories);
+      this.#view.populateReportsList(stories);
     } catch (error) {
       console.error("initialGalleryAndMap: error:", error);
       this.#view.populateReportsListError(error.message);
+    } finally {
+      loadingContainer.innerHTML = "";
+      mapLoadingContainer.innerHTML = "";
     }
   }
 }

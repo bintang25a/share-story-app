@@ -1,3 +1,5 @@
+import { fullscreenLoaderTemplate } from "../../../template";
+
 export default class LoginPresenter {
   #view;
   #model;
@@ -8,6 +10,8 @@ export default class LoginPresenter {
   }
 
   async getLoginData({ email, password }) {
+    document.body.insertAdjacentHTML("beforeend", fullscreenLoaderTemplate());
+
     try {
       const response = await this.#model.setLogin({
         email,
@@ -24,6 +28,8 @@ export default class LoginPresenter {
     } catch (error) {
       console.error("getLoginData: error:", error);
       this.#view.loginFailed(error.message);
+    } finally {
+      document.getElementById("fullscreen-loader")?.remove();
     }
   }
 }

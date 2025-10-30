@@ -43,6 +43,7 @@ class App {
 
     const route = getActiveRoute();
     const navigationDrawer = document.getElementById("navigation-drawer");
+
     navigationDrawer.innerHTML = generateNavbarListTemplate(route);
 
     this.#content.innerHTML = await page.render();
@@ -51,6 +52,8 @@ class App {
     document.getElementById("logout-button")?.addEventListener("click", (e) => {
       setTimeout(() => {
         localStorage.removeItem("loginResult");
+        navigationDrawer.innerHTML = generateNavbarListTemplate(route);
+        window.location.hash = "#/login";
       }, 500);
     });
   }

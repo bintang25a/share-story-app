@@ -1,3 +1,5 @@
+import { fullscreenLoaderTemplate } from "../../template";
+
 export default class AddStoryPresenter {
   #view;
   #model;
@@ -8,6 +10,8 @@ export default class AddStoryPresenter {
   }
 
   async sendStoryData(formData) {
+    document.body.insertAdjacentHTML("beforeend", fullscreenLoaderTemplate());
+
     try {
       const description = formData.get("description");
       const photo = formData.get("photo");
@@ -33,6 +37,8 @@ export default class AddStoryPresenter {
     } catch (error) {
       console.error("sendStoryData: error:", error);
       this.#view.addStoryFailed(error.message);
+    } finally {
+      document.getElementById("fullscreen-loader")?.remove();
     }
   }
 }

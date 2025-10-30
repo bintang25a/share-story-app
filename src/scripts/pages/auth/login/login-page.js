@@ -8,6 +8,8 @@ export default class LoginPage {
     return `
       <section>
         <div class="login-container">
+          <span>Login</span>
+
           <form id="login-form" class="login-form">
             <div class="input-container">
               <label for="email-input">Email</label>

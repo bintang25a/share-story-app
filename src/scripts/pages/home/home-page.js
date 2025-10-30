@@ -8,7 +8,7 @@ export default class HomePage {
 
   async render() {
     return `
-      <section>
+      <section class="map">
         <div class="reports-list__map__container">
           <div id="map" class="reports-list__map"></div>
           <div id="map-loading-container"></div>
@@ -38,7 +38,7 @@ export default class HomePage {
     this.#map = await Map.build("#map", { zoom: 5, locate: true });
   }
 
-  async populateReportsList(message, stories) {
+  async populateReportsList(stories) {
     const container = document.querySelector("#reports-list");
     container.innerHTML = "";
 
@@ -47,9 +47,14 @@ export default class HomePage {
       card.className = "report-card";
       card.innerHTML = `
         <img src="${story.photoUrl}" alt="${story.name}" />
-        <h3>${story.name}</h3>
-        <p>${story.description}</p>
-        <small>${story.createdAt}</small>
+        <div class="text-container">
+          <h3>${story.name}</h3>
+          <p>${story.description}</p>
+          <small>${story.createdAt}</small>
+        </div href="/detail/${story.id}">
+        <a class="detail-button" href="/detail/${story.id}">
+          Go to Detail
+        </a>
       `;
       container.appendChild(card);
     });

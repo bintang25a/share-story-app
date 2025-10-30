@@ -1,3 +1,5 @@
+import { fullscreenLoaderTemplate } from "../../../template";
+
 export default class RegisterPresenter {
   #view;
   #model;
@@ -8,6 +10,8 @@ export default class RegisterPresenter {
   }
 
   async getRegisterData({ name, email, password }) {
+    document.body.insertAdjacentHTML("beforeend", fullscreenLoaderTemplate());
+
     try {
       const response = await this.#model.setRegister({
         name,
@@ -25,6 +29,8 @@ export default class RegisterPresenter {
     } catch (error) {
       console.error("getRegisterData: error:", error);
       this.#view.registeredFailed(error.message);
+    } finally {
+      document.getElementById("fullscreen-loader")?.remove();
     }
   }
 }
