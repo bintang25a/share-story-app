@@ -502,22 +502,41 @@ button {
 }
 
 /* TRANSISI HALAMAN */
-.page-enter {
-  transform: translateX(100%);
-  opacity: 0;
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 0.5s;
+  animation-timing-function: ease;
 }
 
-.page-enter-active {
-  transform: translateX(0);
-  opacity: 1;
-  transition: transform 0.4s ease, opacity 0.4s ease;
+/* Efek geser ke kiri */
+::view-transition-old(root) {
+  animation-name: slide-out-left;
 }
 
-/* Halaman lama keluar ke kiri */
-.page-exit {
-  transform: translateX(-100%);
-  opacity: 0;
-  transition: transform 0.4s ease, opacity 0.4s ease;
+::view-transition-new(root) {
+  animation-name: slide-in-right;
+}
+
+@keyframes slide-out-left {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+}
+
+@keyframes slide-in-right {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
 }
 
 

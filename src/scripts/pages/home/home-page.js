@@ -48,7 +48,7 @@ export default class HomePage {
       card.innerHTML = `
         <img src="${story.photoUrl}" alt="${story.name}" />
         <div class="text-container">
-          <h3>${story.name}</h3>
+          <h2>${story.name}</h2>
           <p>${story.description}</p>
           <small>${story.createdAt}</small>
         </div href="/detail/${story.id}">

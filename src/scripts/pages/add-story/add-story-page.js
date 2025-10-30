@@ -12,7 +12,7 @@ export default class AddStoryPage {
   async render() {
     return `
       <section class="add-story-section container">
-        <h2 class="section-title">Tambah Cerita Baru</h2>
+        <h1 class="section-title">Tambah Cerita Baru</h1>
 
         <form id="add-story-form" class="add-story-form">
           <div class="input-container">

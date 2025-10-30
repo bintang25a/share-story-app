@@ -36,7 +36,7 @@ class App {
     });
   }
 
-  async renderPage() {
+  async renderPage({ withTransition = true } = {}) {
     const url = getActiveRoute();
     const pageFactory = routes[url];
     const page = pageFactory();
@@ -45,31 +45,28 @@ class App {
     const navigationDrawer = document.getElementById("navigation-drawer");
     navigationDrawer.innerHTML = generateNavbarListTemplate(route);
 
-    this.#content.classList.add("page-exit");
-    await new Promise((resolve) => setTimeout(resolve, 200));
+    const renderContent = async () => {
+      this.#content.innerHTML = await page.render();
+      await page.afterRender();
 
-    this.#content.classList.remove("page-exit");
-    this.#content.innerHTML = await page.render();
-    await page.afterRender();
+      // Logout handler
+      document
+        .getElementById("logout-button")
+        ?.addEventListener("click", (e) => {
+          setTimeout(() => {
+            localStorage.removeItem("loginResult");
+            navigationDrawer.innerHTML = generateNavbarListTemplate(route);
+            window.location.hash = "#/login";
+          }, 500);
+        });
+    };
 
-    this.#content.classList.add("page-enter");
-
-    requestAnimationFrame(() => {
-      this.#content.classList.add("page-enter-active");
-      this.#content.classList.remove("page-enter");
-    });
-
-    setTimeout(() => {
-      this.#content.classList.remove("page-enter-active");
-    }, 200);
-
-    document.getElementById("logout-button")?.addEventListener("click", () => {
-      setTimeout(() => {
-        localStorage.removeItem("loginResult");
-        navigationDrawer.innerHTML = generateNavbarListTemplate(route);
-        window.location.hash = "#/login";
-      }, 500);
-    });
+    // Hanya jalankan transisi jika bukan refresh pertama
+    if (withTransition && document.startViewTransition) {
+      document.startViewTransition(renderContent);
+    } else {
+      await renderContent();
+    }
   }
 }
 
