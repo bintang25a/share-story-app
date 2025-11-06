@@ -33,12 +33,12 @@ export function checkUnauthenticatedRouteOnly(page) {
   return page;
 }
 
-export function checkAuthenticatedRoute(page) {
+export function checkAuthenticatedRoute(page, backPage) {
   const isLogin = !!getAccessToken();
 
   if (!isLogin) {
     location.hash = "/login";
-    return page;
+    return backPage;
   }
 
   return page;

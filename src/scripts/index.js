@@ -12,7 +12,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   });
 
   if ("serviceWorker" in navigator) {
-    navigator.serviceWorker.register("/sw.bundle.js");
+    navigator.serviceWorker.register("./sw.bundle.js");
   }
 
   console.log("Berhasil mendaftarkan service worker.");

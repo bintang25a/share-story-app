@@ -48,7 +48,7 @@ class App {
       "enable-notification-button"
     );
 
-    if (isSubscribed) {
+    if (isSubscribed && pushNotificationTools) {
       pushNotificationTools.innerHTML = "Unsubscribe";
       pushNotificationTools.addEventListener("click", () => {
         unsubscribe().finally(() => {
@@ -60,7 +60,7 @@ class App {
       return;
     }
 
-    pushNotificationTools.addEventListener("click", () => {
+    pushNotificationTools?.addEventListener("click", () => {
       subscribe().finally(() => {
         this.#setupPushNotification();
       });
