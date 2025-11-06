@@ -1,6 +1,12 @@
 import routes from "../routes/routes";
 import { getActiveRoute } from "../routes/url-parser";
 import { generateNavbarListTemplate } from "../template";
+import { registerServiceWorker, isServiceWorkerAvailable } from "../utils";
+import {
+  isCurrentPushSubscriptionAvailable,
+  subscribe,
+  unsubscribe,
+} from "../utils/notification-helper";
 
 class App {
   #content = null;
@@ -36,6 +42,31 @@ class App {
     });
   }
 
+  async #setupPushNotification() {
+    const isSubscribed = await isCurrentPushSubscriptionAvailable();
+    const pushNotificationTools = document.getElementById(
+      "enable-notification-button"
+    );
+
+    if (isSubscribed) {
+      pushNotificationTools.innerHTML = "Unsubscribe";
+      pushNotificationTools.addEventListener("click", () => {
+        unsubscribe().finally(() => {
+          pushNotificationTools.innerHTML = "Subscribe";
+          this.#setupPushNotification();
+        });
+      });
+
+      return;
+    }
+
+    pushNotificationTools.addEventListener("click", () => {
+      subscribe().finally(() => {
+        this.#setupPushNotification();
+      });
+    });
+  }
+
   async renderPage({ withTransition = true } = {}) {
     const url = getActiveRoute();
     const pageFactory = routes[url];
@@ -59,6 +90,16 @@ class App {
             window.location.hash = "#/login";
           }, 500);
         });
+
+      await registerServiceWorker();
+
+      if (isServiceWorkerAvailable()) {
+        navigator.serviceWorker.ready
+          .then(() => {
+            this.#setupPushNotification();
+          })
+          .catch(() => {});
+      }
     };
 
     // Hanya jalankan transisi jika bukan refresh pertama

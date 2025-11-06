@@ -1,0 +1,113 @@
+import { precacheAndRoute } from "workbox-precaching";
+import { registerRoute } from "workbox-routing";
+import { CacheableResponsePlugin } from "workbox-cacheable-response";
+import {
+  NetworkFirst,
+  CacheFirst,
+  StaleWhileRevalidate,
+} from "workbox-strategies";
+import CONFIG from "./config";
+
+precacheAndRoute(self.__WB_MANIFEST);
+
+registerRoute(
+  ({ url }) => {
+    return (
+      url.origin === "https://fonts.googleapis.com" ||
+      url.origin === "https://fonts.gstatic.com"
+    );
+  },
+  new CacheFirst({
+    cacheName: "google-fonts",
+  })
+);
+registerRoute(
+  ({ url }) => {
+    return (
+      url.origin === "https://cdnjs.cloudflare.com" ||
+      url.origin.includes("fontawesome")
+    );
+  },
+  new CacheFirst({
+    cacheName: "fontawesome",
+  })
+);
+registerRoute(
+  ({ url }) => {
+    return url.origin === "https://ui-avatars.com";
+  },
+  new CacheFirst({
+    cacheName: "avatars-api",
+    plugins: [
+      new CacheableResponsePlugin({
+        statuses: [0, 200],
+      }),
+    ],
+  })
+);
+registerRoute(
+  ({ request, url }) => {
+    const baseUrl = new URL(CONFIG.BASE_URL);
+    return baseUrl.origin === url.origin && request.destination !== "image";
+  },
+  new NetworkFirst({
+    cacheName: "share-story-api",
+  })
+);
+registerRoute(
+  ({ request, url }) => {
+    const baseUrl = new URL(CONFIG.BASE_URL);
+    return baseUrl.origin === url.origin && request.destination === "image";
+  },
+  new StaleWhileRevalidate({
+    cacheName: "share-story-api-images",
+  })
+);
+registerRoute(
+  ({ url }) => {
+    return url.origin.includes("maptiler");
+  },
+  new CacheFirst({
+    cacheName: "maptiler-api",
+  })
+);
+
+self.addEventListener("push", (event) => {
+  console.log("Service worker pushing...");
+
+  const data = event.data?.json() ?? {
+    title: "Notifikasi",
+    options: { body: "Tidak ada pesan" },
+  };
+
+  event.waitUntil(
+    self.registration.showNotification(data.title, {
+      body: data.options.body,
+      icon: "/icons/icon-192.png",
+      data: {
+        url: data.url || "/",
+      },
+    })
+  );
+});
+
+self.addEventListener("notificationclick", (event) => {
+  event.notification.close();
+
+  const targetUrl = event.notification.data.url || "/";
+
+  event.waitUntil(
+    clients
+      .matchAll({ type: "window", includeUncontrolled: true })
+      .then((clientList) => {
+        for (const client of clientList) {
+          if (client.url.includes(location.origin)) {
+            client.navigate(targetUrl);
+            return client.focus();
+          }
+        }
+
+        return clients.openWindow(targetUrl);
+      })
+  );
+});

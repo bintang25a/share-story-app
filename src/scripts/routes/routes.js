@@ -6,9 +6,11 @@ import {
   checkUnauthenticatedRouteOnly,
 } from "../utils/auth";
 import RegisterPage from "../pages/auth/register/register-page";
+import BookmarkPage from "../pages/bookmark/bookmark-page";
 
 const routes = {
   "/": () => checkAuthenticatedRoute(new HomePage()),
+  "/bookmark": () => checkAuthenticatedRoute(new BookmarkPage()),
   "/addstory": () => checkAuthenticatedRoute(new AddStoryPage()),
   "/logout": () => checkAuthenticatedRoute(new LoginPage()),
 

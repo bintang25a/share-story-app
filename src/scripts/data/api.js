@@ -5,7 +5,70 @@ const ENDPOINTS = {
   LOGIN: `${CONFIG.BASE_URL}/login`,
 
   STORIES: `${CONFIG.BASE_URL}/stories`,
+  SUBSCRIBE: `${CONFIG.BASE_URL}/notifications/subscribe`,
 };
+
+export async function subscribePushNotification({
+  endpoint,
+  keys: { p256dh, auth },
+}) {
+  const userData = JSON.parse(localStorage.getItem("loginResult"));
+  const token = userData?.token;
+
+  if (!userData) {
+    return [];
+  }
+
+  const data = {
+    endpoint,
+    keys: { p256dh, auth },
+  };
+
+  const options = {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(data),
+  };
+
+  const response = await fetch(ENDPOINTS.SUBSCRIBE, options);
+  const responseJson = await response.json();
+
+  return {
+    success: true,
+    message: "Subscribe successfully",
+    data: responseJson,
+  };
+}
+
+export async function unsubscribePushNotification(data) {
+  const userData = JSON.parse(localStorage.getItem("loginResult"));
+  const token = userData?.token;
+
+  if (!userData) {
+    return [];
+  }
+
+  const options = {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(data),
+  };
+
+  const response = await fetch(ENDPOINTS.SUBSCRIBE, options);
+  const responseJson = await response.json();
+
+  return {
+    success: true,
+    message: "Unsubscribe successfully",
+    data: responseJson,
+  };
+}
 
 export async function setRegister(data) {
   try {

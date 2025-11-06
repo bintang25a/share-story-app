@@ -1,6 +1,6 @@
 import { loaderCircleTemplate } from "../../template";
 
-export default class HomePresenter {
+export default class BookmarkPresenter {
   #view;
   #model;
   #dbModel;

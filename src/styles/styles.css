@@ -113,10 +113,14 @@ body {
   gap: var(--size-6);
 }
 
-.nav-list li a {
+.nav-list li a,
+.nav-list li button {
   font-size: var(--size-4);
   font-weight: 500;
   color: #141e16;
+
+  background-color: transparent;
+  border: none;
 
   padding: var(--size-2) var(--size-3);
   line-height: 1;
@@ -126,7 +130,8 @@ body {
   text-decoration: none;
 }
 
-.nav-list li a:hover {
+.nav-list li a:hover,
+.nav-list li button:hover {
   background-color: var(--dark-blue);
   color: #fff;
   border-radius: var(--size-2);
@@ -236,6 +241,8 @@ body {
   margin-left: var(--size-4);
   margin-bottom: var(--size-4);
   background-color: var(--dark-blue);
+
+  border: none;
 
   color: var(--off-white);
   text-decoration: none;

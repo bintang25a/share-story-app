@@ -1,21 +1,12 @@
 import * as ShareStoryAPI from "../../data/api.js";
-import HomePresenter from "./home-presenter.js";
-import Map from "../../utils/map.js";
+import BookmarkPresenter from "./bookmark-presenter.js";
 import Database from "../../data/database.js";
 
-export default class HomePage {
+export default class BookmarkPage {
   #presenter = null;
-  #map = null;
 
   async render() {
     return `
-      <section class="map">
-        <div class="reports-list__map__container">
-          <div id="map" class="reports-list__map"></div>
-          <div id="map-loading-container"></div>
-        </div>
-      </section>
-
       <section class="container">
         <h1 class="section-title">Daftar Cerita Orang-orang</h1>
 
@@ -28,16 +19,12 @@ export default class HomePage {
   }
 
   async afterRender() {
-    this.#presenter = new HomePresenter({
+    this.#presenter = new BookmarkPresenter({
       view: this,
       model: ShareStoryAPI,
       dbModel: Database,
     });
     await this.#presenter.initialGalleryAndMap();
-  }
-
-  async initialMap() {
-    this.#map = await Map.build("#map", { zoom: 5, locate: true });
   }
 
   async populateReportsList(stories) {
@@ -70,28 +57,6 @@ export default class HomePage {
     if (container) {
       container.innerHTML = `<p class="error">${errorMessage}</p>`;
     }
-  }
-
-  async addMarkersToMap(stories) {
-    if (!this.#map) {
-      await this.initialMap();
-    }
-
-    stories.forEach((story) => {
-      if (story.lat && story.lon) {
-        const popupContent = `
-          <strong>${story.name}</strong><br/>
-          ${story.description}<br/>
-          <img src="${story.photoUrl}" alt="${story.name}" width="100" />
-        `;
-
-        this.#map.addMarker(
-          [story.lat, story.lon],
-          {},
-          { content: popupContent }
-        );
-      }
-    });
   }
 
   saveButton() {

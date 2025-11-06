@@ -7,7 +7,7 @@ export const generateNavbarListTemplate = (route) => {
       return `
       <ul id="nav-list" class="nav-list">
         <li><a href="#">Home</a></li>
-        <li><a href="#">Cerita Saya</a></li>
+        <li><button id="enable-notification-button">Subscribe</button></li>
         <li><a href="#/logout" id="logout-button">Logout</a></li>
       </ul>
     `;
@@ -15,7 +15,7 @@ export const generateNavbarListTemplate = (route) => {
       return `
       <ul id="nav-list" class="nav-list">
         <li><a href="#/addstory">Tambah Cerita</a></li>
-        <li><a href="#">Cerita Saya</a></li>
+        <li><button id="enable-notification-button">Subscribe</button></li>
         <li><a href="#/logout" id="logout-button">Logout</a></li>
       </ul>
     `;
