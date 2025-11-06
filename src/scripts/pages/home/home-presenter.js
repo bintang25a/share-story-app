@@ -4,13 +4,11 @@ export default class HomePresenter {
   #view;
   #model;
   #dbModel;
-  #reportId;
 
-  constructor({ view, model, dbModel }, reportId) {
+  constructor({ view, model, dbModel }) {
     this.#view = view;
     this.#model = model;
     this.#dbModel = dbModel;
-    this.#reportId = reportId;
   }
 
   async showReportsListMap() {
@@ -52,25 +50,23 @@ export default class HomePresenter {
     }
   }
 
-  async saveReport() {
+  async saveStory(storyId) {
     try {
-      const report = await this.#model.getDetailStory(this.#reportId);
-      await this.#dbModel.putReport(report.data);
-      this.#view.saveToBookmarkSuccessfully("Success to save to bookmark");
+      const report = await this.#model.getDetailStory(storyId);
+      await this.#dbModel.putReport(report);
+
+      alert("Berhasil menyimpan ke bookmark!");
+
+      return true;
     } catch (error) {
-      console.error("saveReport: error:", error);
-      this.#view.saveToBookmarkFailed(error.message);
+      console.error("saveStory: error:", error);
+      this.#view.populateReportsListError(error.message);
+
+      return false;
     }
   }
 
-  async showSaveButton() {
-    if (await this.#isReportSaved()) {
-      this.#view.removeButton();
-      return;
-    }
-    this.#view.saveButton();
-  }
-  async #isReportSaved() {
-    return !!(await this.#dbModel.getReportById(this.#reportId));
+  async isStorySaved(storyId) {
+    return !!(await this.#dbModel.getReportById(storyId));
   }
 }

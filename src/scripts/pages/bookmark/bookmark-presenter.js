@@ -3,42 +3,26 @@ import { loaderCircleTemplate } from "../../template";
 export default class BookmarkPresenter {
   #view;
   #model;
-  #dbModel;
-  #reportId;
 
-  constructor({ view, model, dbModel }, reportId) {
+  constructor({ view, model }) {
     this.#view = view;
     this.#model = model;
-    this.#dbModel = dbModel;
-    this.#reportId = reportId;
-  }
-
-  async showReportsListMap() {
-    try {
-      await this.#view.initialMap();
-    } catch (error) {
-      console.error("showReportsListMap: error:", error);
-    }
   }
 
   async initialGalleryAndMap() {
     const loadingContainer = document.getElementById(
       "reports-list-loading-container"
     );
-    const mapLoadingContainer = document.getElementById(
-      "map-loading-container"
-    );
 
     try {
       loadingContainer.innerHTML = loaderCircleTemplate();
-      mapLoadingContainer.innerHTML = loaderCircleTemplate();
 
-      await this.showReportsListMap();
-
-      const stories = await this.#model.getStories();
+      const stories = await this.#model.getAllReports();
 
       if (!stories || stories.length === 0) {
-        this.#view.populateReportsListError("Tidak ada cerita ditemukan.");
+        this.#view.populateReportsListError(
+          "Tidak ada cerita ditemukan pada bookmark."
+        );
         return;
       }
 
@@ -48,29 +32,20 @@ export default class BookmarkPresenter {
       this.#view.populateReportsListError(error.message);
     } finally {
       loadingContainer.innerHTML = "";
-      mapLoadingContainer.innerHTML = "";
     }
   }
 
-  async saveReport() {
+  async removeStory(storyId) {
     try {
-      const report = await this.#model.getDetailStory(this.#reportId);
-      await this.#dbModel.putReport(report.data);
-      this.#view.saveToBookmarkSuccessfully("Success to save to bookmark");
-    } catch (error) {
-      console.error("saveReport: error:", error);
-      this.#view.saveToBookmarkFailed(error.message);
-    }
-  }
+      await this.#model.removeReport(storyId);
+      alert("Success to remove from bookmark");
 
-  async showSaveButton() {
-    if (await this.#isReportSaved()) {
-      this.#view.removeButton();
-      return;
+      return true;
+    } catch (error) {
+      console.error("removeReport: error:", error);
+      this.#view.populateReportsListError(error.message);
+
+      return false;
     }
-    this.#view.saveButton();
-  }
-  async #isReportSaved() {
-    return !!(await this.#dbModel.getReportById(this.#reportId));
   }
 }

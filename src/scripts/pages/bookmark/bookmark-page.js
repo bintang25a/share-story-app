@@ -1,4 +1,3 @@
-import * as ShareStoryAPI from "../../data/api.js";
 import BookmarkPresenter from "./bookmark-presenter.js";
 import Database from "../../data/database.js";
 
@@ -8,7 +7,7 @@ export default class BookmarkPage {
   async render() {
     return `
       <section class="container">
-        <h1 class="section-title">Daftar Cerita Orang-orang</h1>
+        <h1 class="section-title">Bookmark story</h1>
 
         <div class="reports-list__container">
           <div id="reports-list"></div>
@@ -21,8 +20,7 @@ export default class BookmarkPage {
   async afterRender() {
     this.#presenter = new BookmarkPresenter({
       view: this,
-      model: ShareStoryAPI,
-      dbModel: Database,
+      model: Database,
     });
     await this.#presenter.initialGalleryAndMap();
   }
@@ -31,7 +29,7 @@ export default class BookmarkPage {
     const container = document.querySelector("#reports-list");
     container.innerHTML = "";
 
-    stories.forEach((story) => {
+    for (const story of stories) {
       const card = document.createElement("div");
       card.className = "report-card";
       card.innerHTML = `
@@ -41,14 +39,24 @@ export default class BookmarkPage {
           <p>${story.description}</p>
           <small>${story.createdAt}</small>
         </div href="/detail/${story.id}">
-        <button id="report-detail-save" class="detail-button">
-          Save this
+        <button class="detail-button" data-id="${story.id}">
+          Saved
         </button>
       `;
-      container.appendChild(card);
-    });
 
-    await this.addMarkersToMap(stories);
+      const button = card.querySelector(".detail-button");
+
+      button.addEventListener("click", async (e) => {
+        const id = e.target.dataset.id;
+        const deleted = await this.#presenter.removeStory(id);
+
+        if (deleted) {
+          await this.#presenter.initialGalleryAndMap();
+        }
+      });
+
+      container.appendChild(card);
+    }
   }
 
   async populateReportsListError(errorMessage) {
@@ -57,14 +65,5 @@ export default class BookmarkPage {
     if (container) {
       container.innerHTML = `<p class="error">${errorMessage}</p>`;
     }
-  }
-
-  saveButton() {
-    const button = document.getElementById("report-detail-save");
-
-    button.addEventListener("click", async (e) => {
-      await this.#presenter.saveReport();
-      await this.#presenter.showSaveButton();
-    });
   }
 }

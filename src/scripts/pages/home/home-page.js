@@ -44,7 +44,7 @@ export default class HomePage {
     const container = document.querySelector("#reports-list");
     container.innerHTML = "";
 
-    stories.forEach((story) => {
+    for (const story of stories) {
       const card = document.createElement("div");
       card.className = "report-card";
       card.innerHTML = `
@@ -53,13 +53,31 @@ export default class HomePage {
           <h2>${story.name}</h2>
           <p>${story.description}</p>
           <small>${story.createdAt}</small>
-        </div href="/detail/${story.id}">
-        <button id="report-detail-save" class="detail-button">
+        </div>
+        <button class="detail-button" data-id="${story.id}">
           Save this
         </button>
       `;
+
+      const button = card.querySelector(".detail-button");
+
+      if (await this.#presenter.isStorySaved(story.id)) {
+        button.textContent = "Saved";
+        button.disabled = true;
+      }
+
+      button.addEventListener("click", async (e) => {
+        const id = e.target.dataset.id;
+        const saved = await this.#presenter.saveStory(id);
+
+        if (saved) {
+          button.textContent = "Saved";
+          button.disabled = true;
+        }
+      });
+
       container.appendChild(card);
-    });
+    }
 
     await this.addMarkersToMap(stories);
   }
@@ -91,15 +109,6 @@ export default class HomePage {
           { content: popupContent }
         );
       }
-    });
-  }
-
-  saveButton() {
-    const button = document.getElementById("report-detail-save");
-
-    button.addEventListener("click", async (e) => {
-      await this.#presenter.saveReport();
-      await this.#presenter.showSaveButton();
     });
   }
 }

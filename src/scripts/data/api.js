@@ -178,6 +178,7 @@ export async function getDetailStory(id) {
       return [];
     }
 
+    console.log(responseJson.story);
     return responseJson.story;
   } catch (error) {
     showResponseMessage(error);
